@@ -11,12 +11,11 @@ public class Ricochet {
         Board board = new Ricochet().loadBoard();
 
         // Debug code - uncomment to test that robot 0 is moved as expected
-        //System.out.print(board);
-        //System.out.println("Possible endpoints for robot 0: " + board.possibleEndpointsForRobot(0));
-        //board.moveRobot(0, Direction.Left);
-        //System.out.print(board);
+        System.out.print(board);
 
         board.computeSolution();
+        System.out.println("Possible endpoints for robot 0: " + board.possibleEndpointsForRobot(0));
+
     }
 
     public class Board {
@@ -28,6 +27,8 @@ public class Ricochet {
         private int size;
         private Point[] robots;
         private Point goal;
+        private Point previousPosition;
+        private Point deadEnd;
 
         public Board(char[][] board, Point[] robots, Point goal) {
             this.board = board;
@@ -37,10 +38,39 @@ public class Ricochet {
         }
 
         public void computeSolution() {
-            // TODO: Implement really clever stuff here!
-            // For now - just output a couple of moves:
-            System.out.println("0"+Direction.Left);
-            System.out.println("0"+Direction.Down);
+            
+        	while(!(robots[0].equals(goal))){
+            	if (!(pointAfterMovingRobot(0, Direction.Up).equals(robots[0])) && !(pointAfterMovingRobot(0, Direction.Up).equals(previousPosition))){
+            		if (!(pointAfterMovingRobot(0, Direction.Up).equals(deadEnd))){
+	            		previousPosition = robots[0];
+	            		moveRobot(0, Direction.Up);
+	            		System.out.println("Up");
+            		}
+            	} else if(!(pointAfterMovingRobot(0, Direction.Down).equals(robots[0])) && !(pointAfterMovingRobot(0, Direction.Down).equals(previousPosition))){
+            		if (!(pointAfterMovingRobot(0, Direction.Up).equals(deadEnd))){
+	            		previousPosition = robots[0];
+	            		moveRobot(0, Direction.Down);
+	            		System.out.println("Down");
+            		}
+            	} else if(!(pointAfterMovingRobot(0, Direction.Left).equals(robots[0])) && !(pointAfterMovingRobot(0, Direction.Left).equals(previousPosition))){
+            		if (!(pointAfterMovingRobot(0, Direction.Up).equals(deadEnd))){
+	            		previousPosition = robots[0];
+	            		moveRobot(0, Direction.Left);
+	            		System.out.println("Left");
+            		}
+            	} else if(!(pointAfterMovingRobot(0, Direction.Right).equals(robots[0])) && !(pointAfterMovingRobot(0, Direction.Right).equals(previousPosition))){
+            		if (!(pointAfterMovingRobot(0, Direction.Up).equals(deadEnd))){
+	            		previousPosition = robots[0];
+	            		moveRobot(0, Direction.Right);
+	            		System.out.println("Right");
+            		}
+            	} else{
+            		deadEnd = robots[0];
+            		robots[0] = previousPosition;
+            		System.out.println("Dead end, going back");
+            	}
+        	}
+        	System.out.println("Win");
         }
 
         public Endpoints possibleEndpointsForRobot(int robot) {
