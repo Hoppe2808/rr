@@ -3,6 +3,7 @@ package tempName;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.awt.Point;
 
 public class Ricochet {
@@ -40,6 +41,11 @@ public class Ricochet {
         public void computeSolution() {
             
         	while(!(robots[0].equals(goal))){
+        		try {
+        		    Thread.sleep(2000);                 //1000 milliseconds is one second.
+        		} catch(InterruptedException ex) {
+        		    Thread.currentThread().interrupt();
+        		}
             	if (!(pointAfterMovingRobot(0, Direction.Up).equals(robots[0])) && !(pointAfterMovingRobot(0, Direction.Up).equals(previousPosition))){
             		if (!(pointAfterMovingRobot(0, Direction.Up).equals(deadEnd))){
 	            		previousPosition = robots[0];
@@ -47,27 +53,26 @@ public class Ricochet {
 	            		System.out.println("Up");
             		}
             	} else if(!(pointAfterMovingRobot(0, Direction.Down).equals(robots[0])) && !(pointAfterMovingRobot(0, Direction.Down).equals(previousPosition))){
-            		if (!(pointAfterMovingRobot(0, Direction.Up).equals(deadEnd))){
+            		if (!(pointAfterMovingRobot(0, Direction.Down).equals(deadEnd))){
 	            		previousPosition = robots[0];
 	            		moveRobot(0, Direction.Down);
 	            		System.out.println("Down");
             		}
             	} else if(!(pointAfterMovingRobot(0, Direction.Left).equals(robots[0])) && !(pointAfterMovingRobot(0, Direction.Left).equals(previousPosition))){
-            		if (!(pointAfterMovingRobot(0, Direction.Up).equals(deadEnd))){
+            		if (!(pointAfterMovingRobot(0, Direction.Left).equals(deadEnd))){
 	            		previousPosition = robots[0];
 	            		moveRobot(0, Direction.Left);
 	            		System.out.println("Left");
             		}
             	} else if(!(pointAfterMovingRobot(0, Direction.Right).equals(robots[0])) && !(pointAfterMovingRobot(0, Direction.Right).equals(previousPosition))){
-            		if (!(pointAfterMovingRobot(0, Direction.Up).equals(deadEnd))){
+            		if (!(pointAfterMovingRobot(0, Direction.Right).equals(deadEnd))){
 	            		previousPosition = robots[0];
 	            		moveRobot(0, Direction.Right);
 	            		System.out.println("Right");
             		}
             	} else{
             		deadEnd = robots[0];
-            		robots[0] = previousPosition;
-            		System.out.println("Dead end, going back");
+            		previousPosition = null;
             	}
         	}
         	System.out.println("Win");
