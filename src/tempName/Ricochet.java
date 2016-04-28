@@ -12,11 +12,7 @@ public class Ricochet {
 	public static void main(String[] args) throws IOException {
 		Board board = new Ricochet().loadBoard();
 
-		// Debug code - uncomment to test that robot 0 is moved as expected
-		System.out.print(board);
-
 		board.computeSolution();
-		System.out.println("Possible endpoints for robot 0: " + board.possibleEndpointsForRobot(0));
 
 	}
 
@@ -43,7 +39,7 @@ public class Ricochet {
 		}
 
 		public void computeSolution() {
-
+			System.out.println(robots[0]);
 			while(!(robots[0].equals(goal))){
 				try {
 					Thread.sleep(500);                 //1000 milliseconds is one second.
@@ -65,12 +61,10 @@ public class Ricochet {
 					for (int i = 0; i < vP.size(); i++){
 						if (vP.get(i).equals(robots[0])){
 							moveBackRobot(0, vP.get(i-1));
-							System.out.println("Kører jeg?");
 						}
 					}
 				}
 			}
-			System.out.println("Win");
 		}
 
 		private boolean moveRight() {
@@ -87,7 +81,7 @@ public class Ricochet {
 						moveRobot(0, Direction.Right);
 						vP.add(robots[0]);
 						prevDirection = "right";
-						System.out.println("Right");
+						System.out.println("0R");
 					}
 					return move;
 				}
@@ -109,7 +103,7 @@ public class Ricochet {
 						moveRobot(0, Direction.Left);
 						vP.add(robots[0]);
 						prevDirection = "left";
-						System.out.println("Left");
+						System.out.println("0L");
 					}
 					return move;
 				}
@@ -131,7 +125,7 @@ public class Ricochet {
 						moveRobot(0, Direction.Down);
 						vP.add(robots[0]);
 						prevDirection = "down";
-						System.out.println("Down");
+						System.out.println("0D");
 					}
 					return move;
 				}
@@ -153,7 +147,7 @@ public class Ricochet {
 						moveRobot(0, Direction.Up);
 						vP.add(robots[0]);
 						prevDirection = "up";
-						System.out.println("Up");
+						System.out.println("0U");
 					}
 					return move;
 				}
@@ -251,6 +245,15 @@ public class Ricochet {
 			board[from.x][from.y] = EMPTY_CHAR;
 			robots[robot] = to;
 			board[to.x][to.y] = (char) ('0' + robot);
+			if(from.x < to.x){
+				System.out.println("0D");
+			} else if(from.y < to.y){
+				System.out.println("0R");
+			} else if(from.x > to.x){
+				System.out.println("0U");
+			} else if(from.y > to.y){
+				System.out.println("0L");
+			}
 		}
 
 		private boolean withinBoard(int x, int y) {
