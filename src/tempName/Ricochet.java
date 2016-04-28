@@ -46,111 +46,154 @@ public class Ricochet {
 
 			while(!(robots[0].equals(goal))){
 				try {
-					Thread.sleep(1000);                 //1000 milliseconds is one second.
+					Thread.sleep(500);                 //1000 milliseconds is one second.
 				} catch(InterruptedException ex) {
 					Thread.currentThread().interrupt();
 				}
-//				int dirCount0;
-//				int dirCount1;
-//				int dirCount2;
-//				int dirCount3;
-//
-//				dirCount0 = (int) (Math.random() * 4) + 1;
-//
-//				do {
-//					dirCount1 = (int) (Math.random() * 4) + 1;
-//				} while (dirCount0 == dirCount1);
-//
-//				do {
-//					dirCount2 = (int) (Math.random() * 4) + 1;
-//				} while (dirCount0 == dirCount2 || dirCount1 == dirCount2);
-//
-//				do {
-//					dirCount3 = (int) (Math.random() * 4) + 1;
-//				} while (dirCount0 == dirCount3 || dirCount1 == dirCount3 || dirCount2 == dirCount3);
-				
+
 				loopDeadEnd = 0;
+
+				if (!(moveUp())){
+					if (!(moveDown())){
+						if (!(moveLeft())){
+							moveRight();	
+						}
+					}
+				}
 				
-				if (!(pointAfterMovingRobot(0, Direction.Up).equals(robots[0])) && !(pointAfterMovingRobot(0, Direction.Up).equals(previousPosition))){
-					if (!(pointAfterMovingRobot(0, Direction.Up).equals(deadEnd))){
-						boolean move = true;
-						for (int i = 0; i < vP.size(); i++){
-							if (vP.get(i).equals(pointAfterMovingRobot(0, Direction.Up))){
-								loopDeadEnd++;
-								move = false;
-							}
-						}
-						if (move){
-						previousPosition = robots[0];
-						moveRobot(0, Direction.Up);
-						vP.add(robots[0]);
-						prevDirection = "up";
-						System.out.println("Up");
-						}
-					}
-				} else if(!(pointAfterMovingRobot(0, Direction.Down).equals(robots[0])) && !(pointAfterMovingRobot(0, Direction.Down).equals(previousPosition))){
-					if (!(pointAfterMovingRobot(0, Direction.Down).equals(deadEnd))){
-						boolean move = true;
-						for (int i = 0; i < vP.size(); i++){
-							if (vP.get(i).equals(pointAfterMovingRobot(0, Direction.Down))){
-								loopDeadEnd++;
-								move = false;
-							}
-						}
-						if (move){
-							previousPosition = robots[0];
-							moveRobot(0, Direction.Down);
-							vP.add(robots[0]);
-							prevDirection = "down";
-							System.out.println("Down");
-						}
-					}
-				} else if(!(pointAfterMovingRobot(0, Direction.Left).equals(robots[0])) && !(pointAfterMovingRobot(0, Direction.Left).equals(previousPosition))){
-					if (!(pointAfterMovingRobot(0, Direction.Left).equals(deadEnd))){
-						boolean move = true;
-						for (int i = 0; i < vP.size(); i++){
-							if (vP.get(i).equals(pointAfterMovingRobot(0, Direction.Left))){
-								loopDeadEnd++;
-								move = false;
-							}
-						}
-						if (move){
-							previousPosition = robots[0];
-							moveRobot(0, Direction.Left);
-							vP.add(robots[0]);
-							prevDirection = "left";
-							System.out.println("Left");
-						}
-					}
-				} else if(!(pointAfterMovingRobot(0, Direction.Right).equals(robots[0])) && !(pointAfterMovingRobot(0, Direction.Right).equals(previousPosition))){
-					if (!(pointAfterMovingRobot(0, Direction.Right).equals(deadEnd))){
-						boolean move = true;
-						for (int i = 0; i < vP.size(); i++){
-							if (vP.get(i).equals(pointAfterMovingRobot(0, Direction.Right))){
-								loopDeadEnd++;
-								move = false;
-							}
-						}
-						if (move){
-							previousPosition = robots[0];
-							moveRobot(0, Direction.Right);
-							vP.add(robots[0]);
-							prevDirection = "right";
-							System.out.println("Right");
-						}
-					}
-				} else{
+				if (checkDeadEnd() && !(robots[0].equals(goal))){
 					for (int i = 0; i < vP.size(); i++){
-						System.out.println("dsads");
 						if (vP.get(i).equals(robots[0])){
 							moveBackRobot(0, vP.get(i-1));
 							System.out.println("Kører jeg?");
 						}
 					}
 				}
-
 			}
 			System.out.println("Win");
+		}
+
+		private boolean moveRight() {
+			if(!(pointAfterMovingRobot(0, Direction.Right).equals(robots[0])) && !(pointAfterMovingRobot(0, Direction.Right).equals(previousPosition))){
+				if (!(pointAfterMovingRobot(0, Direction.Right).equals(deadEnd))){
+					boolean move = true;
+					for (int i = 0; i < vP.size(); i++){
+						if (vP.get(i).equals(pointAfterMovingRobot(0, Direction.Right))){
+							move = false;
+						}
+					}
+					if (move){
+						previousPosition = robots[0];
+						moveRobot(0, Direction.Right);
+						vP.add(robots[0]);
+						prevDirection = "right";
+						System.out.println("Right");
+					}
+					return move;
+				}
+			}
+			return false;
+		}
+
+		private boolean moveLeft() {
+			if(!(pointAfterMovingRobot(0, Direction.Left).equals(robots[0])) && !(pointAfterMovingRobot(0, Direction.Left).equals(previousPosition))){
+				if (!(pointAfterMovingRobot(0, Direction.Left).equals(deadEnd))){
+					boolean move = true;
+					for (int i = 0; i < vP.size(); i++){
+						if (vP.get(i).equals(pointAfterMovingRobot(0, Direction.Left))){
+							move = false;
+						}
+					}
+					if (move){
+						previousPosition = robots[0];
+						moveRobot(0, Direction.Left);
+						vP.add(robots[0]);
+						prevDirection = "left";
+						System.out.println("Left");
+					}
+					return move;
+				}
+			}
+			return false;
+		}
+
+		private boolean moveDown() {
+			if(!(pointAfterMovingRobot(0, Direction.Down).equals(robots[0])) && !(pointAfterMovingRobot(0, Direction.Down).equals(previousPosition))){
+				if (!(pointAfterMovingRobot(0, Direction.Down).equals(deadEnd))){
+					boolean move = true;
+					for (int i = 0; i < vP.size(); i++){
+						if (vP.get(i).equals(pointAfterMovingRobot(0, Direction.Down))){
+							move = false;
+						}
+					}
+					if (move){
+						previousPosition = robots[0];
+						moveRobot(0, Direction.Down);
+						vP.add(robots[0]);
+						prevDirection = "down";
+						System.out.println("Down");
+					}
+					return move;
+				}
+			}
+			return false;
+		}
+
+		private boolean moveUp() {
+			if (!(pointAfterMovingRobot(0, Direction.Up).equals(robots[0])) && !(pointAfterMovingRobot(0, Direction.Up).equals(previousPosition))){
+				if (!(pointAfterMovingRobot(0, Direction.Up).equals(deadEnd))){
+					boolean move = true;
+					for (int i = 0; i < vP.size(); i++){
+						if (vP.get(i).equals(pointAfterMovingRobot(0, Direction.Up))){
+							move = false;
+						}
+					}
+					if (move){
+						previousPosition = robots[0];
+						moveRobot(0, Direction.Up);
+						vP.add(robots[0]);
+						prevDirection = "up";
+						System.out.println("Up");
+					}
+					return move;
+				}
+			}
+			return false;
+		}
+
+		private boolean checkDeadEnd() {
+			loopDeadEnd = 0;
+			for (int i = 0; i < vP.size(); i++){
+				if(pointAfterMovingRobot(0, Direction.Right).equals(vP.get(i)) && !(vP.get(i).equals(robots[0]))){
+					loopDeadEnd++;
+				}
+				if(pointAfterMovingRobot(0, Direction.Left).equals(vP.get(i)) && !(vP.get(i).equals(robots[0]))){
+					loopDeadEnd++;
+				}
+				if(pointAfterMovingRobot(0, Direction.Up).equals(vP.get(i)) && !(vP.get(i).equals(robots[0]))){
+					loopDeadEnd++;
+				}
+				if(pointAfterMovingRobot(0, Direction.Down).equals(vP.get(i)) && !(vP.get(i).equals(robots[0]))){
+					loopDeadEnd++;
+				}
+			}
+			if(pointAfterMovingRobot(0, Direction.Right).equals(robots[0])){
+				loopDeadEnd++;
+			}
+			if(pointAfterMovingRobot(0, Direction.Left).equals(robots[0])){
+				loopDeadEnd++;
+			}
+			if(pointAfterMovingRobot(0, Direction.Up).equals(robots[0])){
+				loopDeadEnd++;
+			}
+			if(pointAfterMovingRobot(0, Direction.Down).equals(robots[0])){
+				loopDeadEnd++;
+			}
+			if (loopDeadEnd == 4){
+				return true;
+			} else{
+				return false;
+			}
 		}
 
 		public Endpoints possibleEndpointsForRobot(int robot) {
