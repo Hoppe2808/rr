@@ -28,6 +28,7 @@ public class Ricochet {
 		private Point previousPosition;
 		private Point deadEnd;
 		private ArrayList<Point> vP = new ArrayList<Point>();
+		private ArrayList<String> sys = new ArrayList<String>();
 		private String prevDirection;
 		private int loopDeadEnd;
 
@@ -39,7 +40,8 @@ public class Ricochet {
 		}
 
 		public void computeSolution() {
-			System.out.println(robots[0]);
+			//System.out.println(robots[0]);
+			
 			while(!(robots[0].equals(goal))){
 				try {
 					Thread.sleep(500);                 //1000 milliseconds is one second.
@@ -61,10 +63,19 @@ public class Ricochet {
 					for (int i = 0; i < vP.size(); i++){
 						if (vP.get(i).equals(robots[0])){
 							moveBackRobot(0, vP.get(i-1));
+							sys.remove(sys.size()-2);
 						}
 					}
 				}
 			}
+			sysprint();
+		}
+
+		private void sysprint() {
+			for(int i = 0; i<sys.size()-1;i++){
+				System.out.print(sys.get(i));
+			}
+			
 		}
 
 		private boolean moveRight() {
@@ -81,7 +92,8 @@ public class Ricochet {
 						moveRobot(0, Direction.Right);
 						vP.add(robots[0]);
 						prevDirection = "right";
-						System.out.println("0R");
+						//System.out.println("0R");
+						sys.add("0R");
 					}
 					return move;
 				}
@@ -103,7 +115,8 @@ public class Ricochet {
 						moveRobot(0, Direction.Left);
 						vP.add(robots[0]);
 						prevDirection = "left";
-						System.out.println("0L");
+						//System.out.println("0L");
+						sys.add("0L");
 					}
 					return move;
 				}
@@ -125,7 +138,8 @@ public class Ricochet {
 						moveRobot(0, Direction.Down);
 						vP.add(robots[0]);
 						prevDirection = "down";
-						System.out.println("0D");
+						//System.out.println("0D");
+						sys.add("0D");
 					}
 					return move;
 				}
@@ -147,7 +161,8 @@ public class Ricochet {
 						moveRobot(0, Direction.Up);
 						vP.add(robots[0]);
 						prevDirection = "up";
-						System.out.println("0U");
+						//System.out.println("0U");
+						sys.add("0U");
 					}
 					return move;
 				}
@@ -246,13 +261,21 @@ public class Ricochet {
 			robots[robot] = to;
 			board[to.x][to.y] = (char) ('0' + robot);
 			if(from.x < to.x){
-				System.out.println("0D");
+				//System.out.println("0D");
+				sys.add("0D");
+				
 			} else if(from.y < to.y){
-				System.out.println("0R");
+				//System.out.println("0R");
+				sys.add("0R");
+
 			} else if(from.x > to.x){
-				System.out.println("0U");
+				//System.out.println("0U");
+				sys.add("0D");
+
 			} else if(from.y > to.y){
-				System.out.println("0L");
+				//System.out.println("0L");
+				sys.add("0D");
+
 			}
 		}
 
