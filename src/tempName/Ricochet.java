@@ -63,7 +63,7 @@ public class Ricochet {
 					for (int i = 0; i < vP.size(); i++){
 						if (vP.get(i).equals(robots[0])){
 							moveBackRobot(0, vP.get(i-1));
-							sys.remove(sys.size()-2);
+							sys.remove(sys.size()-1);
 						}
 					}
 				}
@@ -72,7 +72,7 @@ public class Ricochet {
 		}
 
 		private void sysprint() {
-			for(int i = 0; i<sys.size()-1;i++){
+			for(int i = 0; i<sys.size();i++){
 				System.out.print(sys.get(i));
 			}
 			
