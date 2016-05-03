@@ -43,6 +43,8 @@ public class Ricochet {
 
 		public void computeSolution() {
 			//System.out.println(robots[0]);
+
+//			while(!((robots[0].getLocation())==(goal.getLocation()))){
 			while(!(robots[0].equals(goal))){
 				//				try {
 				//					Thread.sleep(500);                 //1000 milliseconds is one second.
@@ -50,7 +52,7 @@ public class Ricochet {
 				//					Thread.currentThread().interrupt();
 				//				}
 
-				if(sys.size()>5){
+				if(sys.size()>15){
 					retry = true;
 					doretry =true;
 				}
@@ -68,10 +70,10 @@ public class Ricochet {
 					if(doretry){
 						retry();
 					}
-					if (!(moveUp())){
+					if (!(moveRight())){
 						if (!(moveLeft())){
 							if (!(moveDown())){
-								moveRight();	
+								moveUp();	
 							}
 						}
 					}
@@ -80,14 +82,13 @@ public class Ricochet {
 				if (checkDeadEnd() && !(robots[0].equals(goal))){
 					for (int i = 0; i < vP.size(); i++){
 						if (vP.get(i).equals(robots[0])){
-							moveBackRobot(0, vP.get(i-2));
-							sys.remove(sys.size()-2);
+							moveBackRobot(0, vP.get(i-1));
+							sys.remove(sys.size()-1);
 						}
 					}
 				}
 			}
-			
-			sysprint();
+			sysprint();				
 		}
 
 		private void retry() {
