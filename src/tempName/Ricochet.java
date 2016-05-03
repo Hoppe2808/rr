@@ -31,6 +31,8 @@ public class Ricochet {
 		private ArrayList<String> sys = new ArrayList<String>();
 		private String prevDirection;
 		private int loopDeadEnd;
+		private boolean retry = false;
+		private boolean doretry = false;
 
 		public Board(char[][] board, Point[] robots, Point goal) {
 			this.board = board;
@@ -41,41 +43,70 @@ public class Ricochet {
 
 		public void computeSolution() {
 			//System.out.println(robots[0]);
-			
 			while(!(robots[0].equals(goal))){
-				try {
-					Thread.sleep(500);                 //1000 milliseconds is one second.
-				} catch(InterruptedException ex) {
-					Thread.currentThread().interrupt();
+				//				try {
+				//					Thread.sleep(500);                 //1000 milliseconds is one second.
+				//				} catch(InterruptedException ex) {
+				//					Thread.currentThread().interrupt();
+				//				}
+
+				if(sys.size()>5){
+					retry = true;
+					doretry =true;
 				}
-
+				//System.out.println(sys.toString());
 				loopDeadEnd = 0;
-
-				if (!(moveUp())){
-					if (!(moveDown())){
+				if(!retry){
+					if (!(moveUp())){
+						if (!(moveRight())){
+							if (!(moveDown())){
+								moveLeft();	
+							}
+						}
+					}
+				}else{
+					if(doretry){
+						retry();
+					}
+					if (!(moveUp())){
 						if (!(moveLeft())){
-							moveRight();	
+							if (!(moveDown())){
+								moveRight();	
+							}
 						}
 					}
 				}
-				
+
 				if (checkDeadEnd() && !(robots[0].equals(goal))){
 					for (int i = 0; i < vP.size(); i++){
 						if (vP.get(i).equals(robots[0])){
-							moveBackRobot(0, vP.get(i-1));
-							sys.remove(sys.size()-1);
+							moveBackRobot(0, vP.get(i-2));
+							sys.remove(sys.size()-2);
 						}
 					}
 				}
 			}
+			
 			sysprint();
+		}
+
+		private void retry() {
+			doretry = false;
+			for(int i=vP.size()-1;i>=0;i--){
+				vP.remove(i);
+			}
+			for(int i=sys.size()-1;i>=0;i--){
+				sys.remove(i);
+			}
+
+
 		}
 
 		private void sysprint() {
 			for(int i = 0; i<sys.size();i++){
-				System.out.print(sys.get(i));
+				System.out.println(sys.get(i));
 			}
-			
+
 		}
 
 		private boolean moveRight() {
@@ -263,7 +294,7 @@ public class Ricochet {
 			if(from.x < to.x){
 				//System.out.println("0D");
 				sys.add("0D");
-				
+
 			} else if(from.y < to.y){
 				//System.out.println("0R");
 				sys.add("0R");
