@@ -26,13 +26,11 @@ public class Ricochet {
 		private Point[] robots;
 		private Point goal;
 		private Point previousPosition;
-		private Point deadEnd;
 		private ArrayList<Point> vP = new ArrayList<Point>();
-		private ArrayList<String> sys = new ArrayList<String>();
-		private String prevDirection;
+		private ArrayList<Point> correctPoints = new ArrayList<Point>();
 		private int loopDeadEnd;
-		private boolean retry = false;
-		private boolean doretry = false;
+		private int timer = 0;
+		private Point startPosition;
 
 		public Board(char[][] board, Point[] robots, Point goal) {
 			this.board = board;
@@ -42,34 +40,62 @@ public class Ricochet {
 		}
 
 		public void computeSolution() {
-			//System.out.println(robots[0]);
-
-//			while(!((robots[0].getLocation())==(goal.getLocation()))){
+			startPosition = robots[0];
+			correctPoints.add(robots[0]);
 			while(!(robots[0].equals(goal))){
-				//				try {
-				//					Thread.sleep(500);                 //1000 milliseconds is one second.
-				//				} catch(InterruptedException ex) {
-				//					Thread.currentThread().interrupt();
-				//				}
-
-				if(sys.size()>15){
-					retry = true;
-					doretry =true;
+				if (timer == 30){
+					correctPoints.clear();
+					vP.clear();
+					robots[0] = startPosition;
 				}
-				//System.out.println(sys.toString());
-				loopDeadEnd = 0;
-				if(!retry){
+				if (timer == 60){
+					correctPoints.clear();
+					vP.clear();
+					robots[0] = startPosition;
+				}
+				if (timer == 90){
+					correctPoints.clear();
+					vP.clear();
+					robots[0] = startPosition;
+				}
+				if (timer == 120){
+					correctPoints.clear();
+					vP.clear();
+					robots[0] = startPosition;
+				}
+				if (timer == 150){
+					correctPoints.clear();
+					vP.clear();
+					robots[0] = startPosition;
+				}
+				if(timer < 30){
 					if (!(moveUp())){
-						if (!(moveRight())){
-							if (!(moveDown())){
+						if (!(moveDown())){
+							if (!(moveLeft())){
+								moveRight();	
+							}
+						}
+					}
+				}
+				if (timer >= 30 && timer < 60){
+					if (!(moveDown())){
+						if (!(moveUp())){
+							if (!(moveRight())){
 								moveLeft();	
 							}
 						}
 					}
-				}else{
-					if(doretry){
-						retry();
+				}
+				if (timer >= 60 && timer < 90){
+					if (!(moveRight())){
+						if (!(moveUp())){
+							if (!(moveLeft())){
+								moveDown();	
+							}
+						}
 					}
+				}
+				if (timer >= 90 && timer < 120){
 					if (!(moveRight())){
 						if (!(moveLeft())){
 							if (!(moveDown())){
@@ -78,163 +104,149 @@ public class Ricochet {
 						}
 					}
 				}
-
-				if (checkDeadEnd() && !(robots[0].equals(goal))){
-					for (int i = 0; i < vP.size(); i++){
-						if (vP.get(i).equals(robots[0])){
-							moveBackRobot(0, vP.get(i-1));
-							sys.remove(sys.size()-1);
+				if (timer >= 120 && timer < 150){
+					if (!(moveUp())){
+						if (!(moveRight())){
+							if (!(moveLeft())){
+								moveDown();	
+							}
 						}
 					}
 				}
+				if (timer >= 150){
+					if (!(moveLeft())){
+						if (!(moveRight())){
+							if (!(moveDown())){
+								moveUp();	
+							}
+						}
+					}
+				}
+				if (checkDeadEnd() && !(robots[0].equals(goal))){
+					for (int i = 0; i < vP.size(); i++){
+						if (vP.get(i).equals(robots[0])){
+							for (int j = 0; j < correctPoints.size(); j++){
+								if (correctPoints.get(j).equals(robots[0])){
+									correctPoints.remove(j);
+								}
+							}
+							moveBackRobot(0, vP.get(i-1));
+						}
+					}
+				}
+				timer++;
 			}
-			sysprint();				
-		}
-
-		private void retry() {
-			doretry = false;
-			for(int i=vP.size()-1;i>=0;i--){
-				vP.remove(i);
+			for (int i = 0; i < correctPoints.size(); i++){
+				if (correctPoints.get(i) != correctPoints.get(correctPoints.size() - 1)){
+					if(correctPoints.get(i).x < correctPoints.get(i+1).x){
+						System.out.println("0D");
+					} else if(correctPoints.get(i).y < correctPoints.get(i+1).y){
+						System.out.println("0R");
+					} else if(correctPoints.get(i).x > correctPoints.get(i+1).x){
+						System.out.println("0U");
+					} else if(correctPoints.get(i).y > correctPoints.get(i+1).y){
+						System.out.println("0L");
+					}
+				}
 			}
-			for(int i=sys.size()-1;i>=0;i--){
-				sys.remove(i);
-			}
-
-
-		}
-
-		private void sysprint() {
-			for(int i = 0; i<sys.size();i++){
-				System.out.println(sys.get(i));
-			}
-
 		}
 
 		private boolean moveRight() {
 			if(!(pointAfterMovingRobot(0, Direction.Right).equals(robots[0])) && !(pointAfterMovingRobot(0, Direction.Right).equals(previousPosition))){
-				if (!(pointAfterMovingRobot(0, Direction.Right).equals(deadEnd))){
-					boolean move = true;
-					for (int i = 0; i < vP.size(); i++){
-						if (vP.get(i).equals(pointAfterMovingRobot(0, Direction.Right))){
-							move = false;
-						}
+				boolean move = true;
+				for (int i = 0; i < vP.size(); i++){
+					if (vP.get(i).equals(pointAfterMovingRobot(0, Direction.Right))){
+						move = false;
 					}
-					if (move){
-						previousPosition = robots[0];
-						moveRobot(0, Direction.Right);
-						vP.add(robots[0]);
-						prevDirection = "right";
-						//System.out.println("0R");
-						sys.add("0R");
-					}
-					return move;
 				}
+				if (move){
+					moveRobot(0, Direction.Right);
+					vP.add(robots[0]);
+					correctPoints.add(robots[0]);
+				}
+				return move;
 			}
 			return false;
 		}
 
 		private boolean moveLeft() {
 			if(!(pointAfterMovingRobot(0, Direction.Left).equals(robots[0])) && !(pointAfterMovingRobot(0, Direction.Left).equals(previousPosition))){
-				if (!(pointAfterMovingRobot(0, Direction.Left).equals(deadEnd))){
-					boolean move = true;
-					for (int i = 0; i < vP.size(); i++){
-						if (vP.get(i).equals(pointAfterMovingRobot(0, Direction.Left))){
-							move = false;
-						}
+				boolean move = true;
+				for (int i = 0; i < vP.size(); i++){
+					if (vP.get(i).equals(pointAfterMovingRobot(0, Direction.Left))){
+						move = false;
 					}
-					if (move){
-						previousPosition = robots[0];
-						moveRobot(0, Direction.Left);
-						vP.add(robots[0]);
-						prevDirection = "left";
-						//System.out.println("0L");
-						sys.add("0L");
-					}
-					return move;
 				}
+				if (move){
+					moveRobot(0, Direction.Left);
+					vP.add(robots[0]);
+					correctPoints.add(robots[0]);
+				}
+				return move;
 			}
 			return false;
 		}
 
 		private boolean moveDown() {
 			if(!(pointAfterMovingRobot(0, Direction.Down).equals(robots[0])) && !(pointAfterMovingRobot(0, Direction.Down).equals(previousPosition))){
-				if (!(pointAfterMovingRobot(0, Direction.Down).equals(deadEnd))){
-					boolean move = true;
-					for (int i = 0; i < vP.size(); i++){
-						if (vP.get(i).equals(pointAfterMovingRobot(0, Direction.Down))){
-							move = false;
-						}
+				boolean move = true;
+				for (int i = 0; i < vP.size(); i++){
+					if (vP.get(i).equals(pointAfterMovingRobot(0, Direction.Down))){
+						move = false;
 					}
-					if (move){
-						previousPosition = robots[0];
-						moveRobot(0, Direction.Down);
-						vP.add(robots[0]);
-						prevDirection = "down";
-						//System.out.println("0D");
-						sys.add("0D");
-					}
-					return move;
 				}
+				if (move){
+					moveRobot(0, Direction.Down);
+					vP.add(robots[0]);
+					correctPoints.add(robots[0]);
+				}
+				return move;
 			}
 			return false;
 		}
 
 		private boolean moveUp() {
 			if (!(pointAfterMovingRobot(0, Direction.Up).equals(robots[0])) && !(pointAfterMovingRobot(0, Direction.Up).equals(previousPosition))){
-				if (!(pointAfterMovingRobot(0, Direction.Up).equals(deadEnd))){
-					boolean move = true;
-					for (int i = 0; i < vP.size(); i++){
-						if (vP.get(i).equals(pointAfterMovingRobot(0, Direction.Up))){
-							move = false;
-						}
+				boolean move = true;
+				for (int i = 0; i < vP.size(); i++){
+					if (vP.get(i).equals(pointAfterMovingRobot(0, Direction.Up))){
+						move = false;
 					}
-					if (move){
-						previousPosition = robots[0];
-						moveRobot(0, Direction.Up);
-						vP.add(robots[0]);
-						prevDirection = "up";
-						//System.out.println("0U");
-						sys.add("0U");
-					}
-					return move;
 				}
+				if (move){
+					moveRobot(0, Direction.Up);
+					vP.add(robots[0]);
+					correctPoints.add(robots[0]);
+				}
+				return move;
 			}
 			return false;
 		}
 
 		private boolean checkDeadEnd() {
 			loopDeadEnd = 0;
+			Endpoints ep = possibleEndpointsForRobot(0);
 			for (int i = 0; i < vP.size(); i++){
-				if(pointAfterMovingRobot(0, Direction.Right).equals(vP.get(i)) && !(vP.get(i).equals(robots[0]))){
+				if (ep.down.equals(vP.get(i))){
 					loopDeadEnd++;
 				}
-				if(pointAfterMovingRobot(0, Direction.Left).equals(vP.get(i)) && !(vP.get(i).equals(robots[0]))){
+				if (ep.left.equals(vP.get(i))){
 					loopDeadEnd++;
 				}
-				if(pointAfterMovingRobot(0, Direction.Up).equals(vP.get(i)) && !(vP.get(i).equals(robots[0]))){
+				if (ep.right.equals(vP.get(i))){
 					loopDeadEnd++;
 				}
-				if(pointAfterMovingRobot(0, Direction.Down).equals(vP.get(i)) && !(vP.get(i).equals(robots[0]))){
+				if (ep.up.equals(vP.get(i))){
 					loopDeadEnd++;
 				}
-			}
-			if(pointAfterMovingRobot(0, Direction.Right).equals(robots[0])){
-				loopDeadEnd++;
-			}
-			if(pointAfterMovingRobot(0, Direction.Left).equals(robots[0])){
-				loopDeadEnd++;
-			}
-			if(pointAfterMovingRobot(0, Direction.Up).equals(robots[0])){
-				loopDeadEnd++;
-			}
-			if(pointAfterMovingRobot(0, Direction.Down).equals(robots[0])){
-				loopDeadEnd++;
 			}
 			if (loopDeadEnd == 4){
 				return true;
 			} else{
 				return false;
 			}
+			
+			
 		}
 
 		public Endpoints possibleEndpointsForRobot(int robot) {
@@ -292,23 +304,6 @@ public class Ricochet {
 			board[from.x][from.y] = EMPTY_CHAR;
 			robots[robot] = to;
 			board[to.x][to.y] = (char) ('0' + robot);
-			if(from.x < to.x){
-				//System.out.println("0D");
-				sys.add("0D");
-
-			} else if(from.y < to.y){
-				//System.out.println("0R");
-				sys.add("0R");
-
-			} else if(from.x > to.x){
-				//System.out.println("0U");
-				sys.add("0D");
-
-			} else if(from.y > to.y){
-				//System.out.println("0L");
-				sys.add("0D");
-
-			}
 		}
 
 		private boolean withinBoard(int x, int y) {
