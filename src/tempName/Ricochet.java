@@ -13,7 +13,6 @@ public class Ricochet {
 		Board board = new Ricochet().loadBoard();
 
 		board.computeSolution();
-
 	}
 
 	public class Board {
@@ -25,13 +24,12 @@ public class Ricochet {
 		private int size;
 		private Point[] robots;
 		private Point goal;
-		private Point previousPosition;
 		private ArrayList<Point> vP = new ArrayList<Point>();
 		private ArrayList<Point> correctPoints = new ArrayList<Point>();
+		private ArrayList<String> syso = new ArrayList<String>();
 		private int loopDeadEnd;
-		private int timer = 0;
 		private Point startPosition;
-
+		
 		public Board(char[][] board, Point[] robots, Point goal) {
 			this.board = board;
 			this.size = board.length;
@@ -42,122 +40,84 @@ public class Ricochet {
 		public void computeSolution() {
 			startPosition = robots[0];
 			correctPoints.add(robots[0]);
+			vP.add(robots[0]);
 			while(!(robots[0].equals(goal))){
-				if (timer == 30||timer == 60||timer ==90||timer==120
-					||timer==150||timer==180||timer==210){
-					correctPoints.clear();
-					vP.clear();
-					robots[0] = startPosition;
-				}
-				if(timer < 30){
+
+				if (!(moveUp())){
 					if (!(moveDown())){
-						if (!(moveUp())){
-							if (!(moveLeft())){
-								moveRight();	
-							}
-						}
-					}
-				}
-				if (timer >= 30 && timer < 60){
-					if (!(moveDown())){
-						if (!(moveUp())){
-							if (!(moveRight())){
-								moveLeft();	
-							}
-						}
-					}
-				}
-				if (timer >= 60 && timer < 90){
-					if (!(moveRight())){
 						if (!(moveLeft())){
-							if (!(moveDown())){
-								moveUp();	
-							}
+							moveRight();	
 						}
 					}
 				}
-				if (timer >= 90 && timer < 120){
-					if (!(moveRight())){
-						if (!(moveUp())){
-							if (!(moveLeft())){
-								moveDown();	
-							}
-						}
-					}
-				}
-				
-				if (timer >= 120 && timer < 150){
-					if (!(moveUp())){
-						if (!(moveRight())){
-							if (!(moveLeft())){
-								moveDown();	
-							}
-						}
-					}
-				}
-				if (timer >= 150 && timer < 180){
-					if (!(moveLeft())){
-						if (!(moveRight())){
-							if (!(moveDown())){
-								moveUp();	
-							}
-						}
-					}
-				}
-				if (timer >= 180 && timer < 210){
-					if (!(moveLeft())){
-						if (!(moveRight())){
-							if (!(moveDown())){
-								moveUp();	
-							}
-						}
-					}
-				}
-				if (timer >= 210){
-					if (!(moveLeft())){
-						if (!(moveRight())){
-							if (!(moveDown())){
-								moveUp();	
-							}
-						}
-					}
-				}
+
 				if (checkDeadEnd() && !(robots[0].equals(goal))){
-					for (int i = 0; i < vP.size(); i++){
+					for (int i = 1; i < vP.size(); i++){
 						if (vP.get(i).equals(robots[0])){
 							for (int j = 0; j < correctPoints.size(); j++){
 								if (correctPoints.get(j).equals(robots[0])){
 									correctPoints.remove(j);
+									break;
 								}
 							}
-							moveBackRobot(0, vP.get(i-1));
+							if (!(robots[0].equals(startPosition))){
+								try{
+									moveBackRobot(0, vP.get(i - 1));								
+								}catch(ArrayIndexOutOfBoundsException e){
+									System.out.println(robots[0]);
+								}
+							} else {
+								System.out.println("Haeae");
+							}
+							break;
 						}
 					}
 				}
-				timer++;
-//				System.out.println(timer);
 			}
 			for (int i = 0; i < correctPoints.size(); i++){
 				if (correctPoints.get(i) != correctPoints.get(correctPoints.size() - 1)){
 					if(correctPoints.get(i).x < correctPoints.get(i+1).x){
-						System.out.println("0D");
+						syso.add("0D");
 					} else if(correctPoints.get(i).y < correctPoints.get(i+1).y){
-						System.out.println("0R");
+						syso.add("0R");
 					} else if(correctPoints.get(i).x > correctPoints.get(i+1).x){
-						System.out.println("0U");
+						syso.add("0U");
 					} else if(correctPoints.get(i).y > correctPoints.get(i+1).y){
-						System.out.println("0L");
+						syso.add("0L");
 					}
 				}
+			}
+			for (int i = 0; i < syso.size() - 1; i++){
+				if(syso.get(i).equals("0D")){
+					if (syso.get(i+1).equals("0U")){
+						syso.remove(i);
+					}
+				} else if(syso.get(i).equals("0U")){
+					if (syso.get(i+1).equals("0D")){
+						syso.remove(i);
+					}
+				} else if(syso.get(i).equals("0L")){
+					if (syso.get(i+1).equals("0R")){
+						syso.remove(i);
+					}
+				} else if(syso.get(i).equals("0R")){
+					if (syso.get(i+1).equals("0L")){
+						syso.remove(i);
+					}
+				}
+			}
+			for (int i = 0; i < syso.size(); i++){
+				System.out.println(syso.get(i));
 			}
 		}
 
 		private boolean moveRight() {
-			if(!(pointAfterMovingRobot(0, Direction.Right).equals(robots[0])) && !(pointAfterMovingRobot(0, Direction.Right).equals(previousPosition))){
+			if(!(pointAfterMovingRobot(0, Direction.Right).equals(robots[0]))){
 				boolean move = true;
 				for (int i = 0; i < vP.size(); i++){
 					if (vP.get(i).equals(pointAfterMovingRobot(0, Direction.Right))){
 						move = false;
+						break;
 					}
 				}
 				if (move){
@@ -171,11 +131,12 @@ public class Ricochet {
 		}
 
 		private boolean moveLeft() {
-			if(!(pointAfterMovingRobot(0, Direction.Left).equals(robots[0])) && !(pointAfterMovingRobot(0, Direction.Left).equals(previousPosition))){
+			if(!(pointAfterMovingRobot(0, Direction.Left).equals(robots[0]))){
 				boolean move = true;
 				for (int i = 0; i < vP.size(); i++){
 					if (vP.get(i).equals(pointAfterMovingRobot(0, Direction.Left))){
 						move = false;
+						break;
 					}
 				}
 				if (move){
@@ -189,11 +150,12 @@ public class Ricochet {
 		}
 
 		private boolean moveDown() {
-			if(!(pointAfterMovingRobot(0, Direction.Down).equals(robots[0])) && !(pointAfterMovingRobot(0, Direction.Down).equals(previousPosition))){
+			if(!(pointAfterMovingRobot(0, Direction.Down).equals(robots[0]))){
 				boolean move = true;
 				for (int i = 0; i < vP.size(); i++){
 					if (vP.get(i).equals(pointAfterMovingRobot(0, Direction.Down))){
 						move = false;
+						break;
 					}
 				}
 				if (move){
@@ -207,11 +169,12 @@ public class Ricochet {
 		}
 
 		private boolean moveUp() {
-			if (!(pointAfterMovingRobot(0, Direction.Up).equals(robots[0])) && !(pointAfterMovingRobot(0, Direction.Up).equals(previousPosition))){
+			if (!(pointAfterMovingRobot(0, Direction.Up).equals(robots[0]))){
 				boolean move = true;
 				for (int i = 0; i < vP.size(); i++){
 					if (vP.get(i).equals(pointAfterMovingRobot(0, Direction.Up))){
 						move = false;
+						break;
 					}
 				}
 				if (move){
@@ -240,14 +203,15 @@ public class Ricochet {
 				if (ep.up.equals(vP.get(i))){
 					loopDeadEnd++;
 				}
+				if (loopDeadEnd == 4){
+					break;
+				}
 			}
 			if (loopDeadEnd == 4){
 				return true;
 			} else{
 				return false;
 			}
-			
-			
 		}
 
 		public Endpoints possibleEndpointsForRobot(int robot) {
@@ -298,13 +262,15 @@ public class Ricochet {
 			board[to.x][to.y] = (char) ('0' + robot);
 		}
 		public void moveBackRobot(int robot, Point d) {
-			assert robot < robots.length;
-
-			Point from = robots[robot];
-			Point to = d;
-			board[from.x][from.y] = EMPTY_CHAR;
-			robots[robot] = to;
-			board[to.x][to.y] = (char) ('0' + robot);
+			if (!(startPosition.equals(robots[0]))){
+				assert robot < robots.length;
+				
+				Point from = robots[robot];
+				Point to = d;
+				board[from.x][from.y] = EMPTY_CHAR;
+				robots[robot] = to;
+				board[to.x][to.y] = (char) ('0' + robot);
+			}
 		}
 
 		private boolean withinBoard(int x, int y) {
