@@ -43,34 +43,15 @@ public class Ricochet {
 			startPosition = robots[0];
 			correctPoints.add(robots[0]);
 			while(!(robots[0].equals(goal))){
-				if (timer == 30){
-					correctPoints.clear();
-					vP.clear();
-					robots[0] = startPosition;
-				}
-				if (timer == 60){
-					correctPoints.clear();
-					vP.clear();
-					robots[0] = startPosition;
-				}
-				if (timer == 90){
-					correctPoints.clear();
-					vP.clear();
-					robots[0] = startPosition;
-				}
-				if (timer == 120){
-					correctPoints.clear();
-					vP.clear();
-					robots[0] = startPosition;
-				}
-				if (timer == 150){
+				if (timer == 30||timer == 60||timer ==90||timer==120
+					||timer==150||timer==180||timer==210){
 					correctPoints.clear();
 					vP.clear();
 					robots[0] = startPosition;
 				}
 				if(timer < 30){
-					if (!(moveUp())){
-						if (!(moveDown())){
+					if (!(moveDown())){
+						if (!(moveUp())){
 							if (!(moveLeft())){
 								moveRight();	
 							}
@@ -88,15 +69,6 @@ public class Ricochet {
 				}
 				if (timer >= 60 && timer < 90){
 					if (!(moveRight())){
-						if (!(moveUp())){
-							if (!(moveLeft())){
-								moveDown();	
-							}
-						}
-					}
-				}
-				if (timer >= 90 && timer < 120){
-					if (!(moveRight())){
 						if (!(moveLeft())){
 							if (!(moveDown())){
 								moveUp();	
@@ -104,6 +76,16 @@ public class Ricochet {
 						}
 					}
 				}
+				if (timer >= 90 && timer < 120){
+					if (!(moveRight())){
+						if (!(moveUp())){
+							if (!(moveLeft())){
+								moveDown();	
+							}
+						}
+					}
+				}
+				
 				if (timer >= 120 && timer < 150){
 					if (!(moveUp())){
 						if (!(moveRight())){
@@ -113,7 +95,25 @@ public class Ricochet {
 						}
 					}
 				}
-				if (timer >= 150){
+				if (timer >= 150 && timer < 180){
+					if (!(moveLeft())){
+						if (!(moveRight())){
+							if (!(moveDown())){
+								moveUp();	
+							}
+						}
+					}
+				}
+				if (timer >= 180 && timer < 210){
+					if (!(moveLeft())){
+						if (!(moveRight())){
+							if (!(moveDown())){
+								moveUp();	
+							}
+						}
+					}
+				}
+				if (timer >= 210){
 					if (!(moveLeft())){
 						if (!(moveRight())){
 							if (!(moveDown())){
@@ -135,6 +135,7 @@ public class Ricochet {
 					}
 				}
 				timer++;
+//				System.out.println(timer);
 			}
 			for (int i = 0; i < correctPoints.size(); i++){
 				if (correctPoints.get(i) != correctPoints.get(correctPoints.size() - 1)){
